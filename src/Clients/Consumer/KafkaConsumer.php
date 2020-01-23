@@ -17,6 +17,7 @@ use function array_map;
 use function pcntl_signal_dispatch;
 use function rd_kafka_err2str;
 use function sprintf;
+use const LOG_DEBUG;
 use const RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS;
 use const RD_KAFKA_RESP_ERR__PARTITION_EOF;
 use const RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS;
@@ -35,6 +36,9 @@ final class KafkaConsumer extends RdKafkaConsumer
         $this->logger = $logger ?? new NullLogger();
 
         $this->setupInternalTerminationSignal($config);
+
+        $config->getConf()->set('log_level', (string) LOG_DEBUG);
+        $config->getConf()->set('debug', 'all');
 
         $config->getConf()->setErrorCb(
             function ($kafka, $err, $reason) : void {
